@@ -2,85 +2,45 @@ import React , {useState ,useEffect} from 'react';
 import CharacterCard from './CharacterCard'
 import './App.css';
 
-function App() {
-  
-  const maxChars = 2138;
-  const maxHouses = 444;
-  const nCards = 5;
-  const characterAPI = "https://anapioficeandfire.com/api/characters/"
-  const bookAPI = "https://anapioficeandfire.com/api/books/"
+const CHARACTER_API = 'https://anapioficeandfire.com/api/characters/'
+// const BOOK_API = 'https://anapioficeandfire.com/api/books/'
 
-  const [character1, setCharacter1] = useState([]);
-  const [character2, setCharacter2] = useState([]);
-  const [character3, setCharacter3] = useState([]);
-  const [character4, setCharacter4] = useState([]);
-  const [character5, setCharacter5] = useState([]);
+const fetchCharacter = async (id) => {
+  const response = await fetch(`${CHARACTER_API}${id}`)
 
-  useEffect(() => {
-    
-    var randInt =  Math.floor(Math.random() * maxChars) + 1 ;
-    var CharAPI = characterAPI+randInt
-
-    fetch(CharAPI)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setCharacter1(result);
-        }
-      )
-
-     randInt =  Math.floor(Math.random() * maxChars) + 1 ;
-     CharAPI = characterAPI+randInt
-
-      fetch(CharAPI)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setCharacter2(result);
-        }
-      )
-    randInt =  Math.floor(Math.random() * maxChars) + 1 ;
-    CharAPI = characterAPI+randInt
-      fetch(CharAPI)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setCharacter3(result);
-        }
-      )
-      randInt =  Math.floor(Math.random() * maxChars) + 1 ;
-      CharAPI = characterAPI+randInt
-      fetch(CharAPI)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setCharacter4(result);
-        }
-      )
-      randInt =  Math.floor(Math.random() * maxChars) + 1 ;
-      CharAPI = characterAPI+randInt
-      fetch(CharAPI)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          setCharacter5(result);
-        }
-      )
-  }, [])
-
-
-
-  return (
-    <div>
-        <CharacterCard character={character1}/>
-        <CharacterCard character={character2}/>
-        <CharacterCard character={character3}/>
-        <CharacterCard character={character4}/>
-        <CharacterCard character={character5}/>
-    </div>
-  );
-
+  return await response.json()
 }
 
-export default App;
+const App = () => {
+  // const maxHouses = 444
+  const maxChars = 2138
+  const nCards = 5
+  const [characters, setCharacters] = useState([])
 
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      let fetchedCharacters = []
+
+      for (let i = 0; i < nCards; i++) {
+        const id = Math.floor(Math.random() * maxChars) + 1
+        fetchedCharacters.push(await fetchCharacter(id))
+      }
+
+      setCharacters(fetchedCharacters)
+    }
+
+    fetchCharacters()
+  }, [])
+
+  return (
+    <>
+      {characters.length === 0 && (
+        <div style={{ margin: '20px' }}>Please wait, fetching characters...</div>
+      )}
+
+      {characters.map((character, index) => <CharacterCard key={`char-card-${index}`} character={character} />)}
+    </>
+  )
+}
+
+export default App
