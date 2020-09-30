@@ -13,7 +13,7 @@ const fetchCharacter = async (id) => {
 }
 
 const fetchHouse = async (api) => {
-  const response = await fetch(`${api}`)
+  const response = await fetch(api)
 
   return await response.json()
 }
@@ -26,8 +26,8 @@ const mixHouses = (houses) => {
     const nItems = houses.length
     const houseId = Math.floor(Math.random() * nItems)
 
-    mixedItems.push(houses[houseId])
-    houses.pop(houseId)
+    mixedItems.push({ ...houses[houseId]})
+    houses.splice(houseId, 1)
   }
 
   return mixedItems
@@ -53,14 +53,15 @@ const App = () => {
 
         mainAllegiances = fetchedCharacter.allegiances
 
-        if (mainAllegiances.length ===0){
+        if (mainAllegiances.length === 0){
           continue
         } else {
           mainAllegiances = mainAllegiances[0]
         }
+
         const fetchedHouse = await fetchHouse(mainAllegiances)
 
-        fetchedCharacters.push( fetchedCharacter)
+        fetchedCharacters.push(fetchedCharacter)
         fetchedHouses.push(fetchedHouse)
 
         i++
