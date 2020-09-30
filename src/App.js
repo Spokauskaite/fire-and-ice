@@ -1,10 +1,10 @@
-import React , {useState ,useEffect} from 'react';
+import React, { useState, useEffect } from 'react'
 import CharacterCard from './CharacterCard'
 import HouseCard from './HouseCard'
-import './App.css';
+import './App.css'
 
 const CHARACTER_API = 'https://anapioficeandfire.com/api/characters/'
-const HOUSE_API = "https://anapioficeandfire.com/api/houses/"
+// const HOUSE_API = "https://anapioficeandfire.com/api/houses/"
 
 const fetchCharacter = async (id) => {
   const response = await fetch(`${CHARACTER_API}${id}`)
@@ -21,21 +21,22 @@ const fetchHouse = async (api) => {
 const mixHouses = (houses) => {
   let mixedItems = []
   const maxHouses = houses.length
-  for (let i=0; i<maxHouses;  i++){
+
+  for (let i = 0; i < maxHouses; i++){
     const nItems = houses.length
-    const houseId = Math.floor(Math.random() * nItems) + 1
+    const houseId = Math.floor(Math.random() * nItems)
+
     mixedItems.push(houses[houseId])
     houses.pop(houseId)
   }
-  
+
   return mixedItems
 }
 
-
 const App = () => {
   // const maxHouses = 444
+  // const nCards = 5
   const maxChars = 2138
-  const nCards = 5
   const [characters, setCharacters] = useState([])
   const [houses, setHouses] = useState([])
 
@@ -43,17 +44,17 @@ const App = () => {
     const fetchCharacters = async () => {
       let fetchedCharacters = []
       let fetchedHouses = []
-      let mixedHouses = []
       let mainAllegiances = null
-      let i=0
+      let i = 0
+
       while (i < 5) {
         const id = Math.floor(Math.random() * maxChars) + 1
         const fetchedCharacter = await fetchCharacter(id)
 
-        mainAllegiances  = fetchedCharacter.allegiances  
-       
+        mainAllegiances = fetchedCharacter.allegiances
+
         if (mainAllegiances.length ===0){
-          continue;
+          continue
         } else {
           mainAllegiances = mainAllegiances[0]
         }
@@ -62,13 +63,13 @@ const App = () => {
         fetchedCharacters.push( fetchedCharacter)
         fetchedHouses.push(fetchedHouse)
 
-        i++;
+        i++
       }
 
-      //mixedHouses =  mixHouses(fetchedHouses)
+      let mixedHouses = mixHouses(fetchedHouses)
 
       setCharacters(fetchedCharacters)
-      setHouses(fetchedHouses)
+      setHouses(mixedHouses)
     }
 
     fetchCharacters()
