@@ -1,10 +1,44 @@
 .charCard{
   background:#e07ec6;
   color:#FFFFFF;
-  height:75px;
-  width:400px;
+  height:50px;
+  width:300px;
   padding:15px;
   margin:15px;
   text-align: center;
+  font-size: 10px;
+}
+.houseCard{
+  background:#766ec6;
+  color:#FFFFFF;
+  height:50px;
+  width:300px;
+  padding:15px;
+  margin:15px;
+  text-align: center;
+  font-size: 10px;
 }
 
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
+}
+
+.box{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.right{
+  align-items: 'flex-end'
+}

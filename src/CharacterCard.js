@@ -6,7 +6,7 @@ export default ({ character }) => {
   console.log(name)
 
   return(
-    <div className="charCard">
+    <div className="charCard box">
       <h1>{name}</h1>
     </div>
   )
