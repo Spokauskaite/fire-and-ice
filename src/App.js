@@ -26,7 +26,7 @@ const mixHouses = (houses) => {
     const nItems = houses.length
     const houseId = Math.floor(Math.random() * nItems)
 
-    mixedItems.push({ ...houses[houseId]})
+    mixedItems.push(houses[houseId])
     houses.splice(houseId, 1)
   }
 
