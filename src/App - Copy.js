@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-//import CharacterCard from './CharacterCard'
+import CharacterCard from './CharacterCard'
 import HouseCard from './HouseCard'
 import './App.css'
+
+import { DragDropContext } from 'react-beautiful-dnd';
 
 const CHARACTER_API = 'https://anapioficeandfire.com/api/characters/'
 // const HOUSE_API = "https://anapioficeandfire.com/api/houses/"
@@ -34,38 +35,12 @@ const mixHouses = (houses) => {
   return mixedItems
 }
 
-// a little function to help us with reordering the result
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list)
-  const [removed] = result.splice(startIndex, 1)
-  result.splice(endIndex, 0, removed)
-
-  return result
-}
-
 const App = () => {
   // const maxHouses = 444
   // const nCards = 5
   const maxChars = 2138
   const [characters, setCharacters] = useState([])
   const [houses, setHouses] = useState([])
-
-  const onDragEnd = result => {
-    console.log('atejo')
-    console.log(result)
-    // dropped outside the list
-    if (!result.destination) {
-      return
-    }
-  
-    const reorderedCharacters = reorder(
-      characters,
-      result.source.index,
-      result.destination.index
-    )
-  
-    setCharacters(reorderedCharacters)
-  }
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -110,39 +85,7 @@ const App = () => {
         {characters.length === 0 && (
           <div style={{ margin: '20px' }}>Please wait, fetching characters...</div>
         )}
-
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="droppable">
-            {(provided, snapshot) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {characters.map((character, index) => (
-                  <Draggable 
-                    key={`char-card-${index}`}
-                    draggableId={`char-card-${index}`} 
-                    index={index} 
-                  >
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <div className="charCard box">
-                          <h1>{character.name}</h1>
-                        </div>
-                      </div>
-                    )}
-                  </Draggable> 
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-
+      {characters.map((character, index) => <CharacterCard key={`char-card-${index}`} character={character} />)}
       </div>
       <div className="column right">
         {houses.length === 0 && (
@@ -156,6 +99,3 @@ const App = () => {
 }
 
 export default App
-
-
-
