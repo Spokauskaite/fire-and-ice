@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 //import CharacterCard from './CharacterCard'
-import HouseCard from './HouseCard'
+//import HouseCard from './HouseCard'
 import './App.css'
 
 const CHARACTER_API = 'https://anapioficeandfire.com/api/characters/'
@@ -43,6 +43,23 @@ const reorder = (list, startIndex, endIndex) => {
   return result
 }
 
+/**
+ * Moves an item from one list to another list.
+ */
+const move = (source, destination, droppableSource, droppableDestination) => {
+  const sourceClone = Array.from(source);
+  const destClone = Array.from(destination);
+  const [removed] = sourceClone.splice(droppableSource.index, 1);
+
+  destClone.splice(droppableDestination.index, 0, removed);
+
+  const result = {};
+  result[droppableSource.droppableId] = sourceClone;
+  result[droppableDestination.droppableId] = destClone;
+
+  return result;
+};
+
 const App = () => {
   // const maxHouses = 444
   // const nCards = 5
@@ -51,20 +68,29 @@ const App = () => {
   const [houses, setHouses] = useState([])
 
   const onDragEnd = result => {
-    console.log('atejo')
     console.log(result)
+    const { source, destination } = result;
+
+    console.log('atejo')
+    console.log(source.droppableId)
+    console.log(destination.droppableId)
+
     // dropped outside the list
-    if (!result.destination) {
+    if (!destination) {
       return
     }
   
-    const reorderedCharacters = reorder(
-      characters,
-      result.source.index,
-      result.destination.index
-    )
-  
-    setCharacters(reorderedCharacters)
+    if (source.droppableId === destination.droppableId){
+      const reorderedCharacters = reorder(
+        characters,
+        source.index,
+        destination.index
+      )
+      setCharacters(reorderedCharacters)
+    } else{
+      // do something else
+    }
+
   }
 
   useEffect(() => {
@@ -102,57 +128,69 @@ const App = () => {
 
     fetchCharacters()
   }, [])
-
   return (
     <>
-    <div className="row">
-      <div className="column">
-        {characters.length === 0 && (
-          <div style={{ margin: '20px' }}>Please wait, fetching characters...</div>
-        )}
-
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="droppable">
-            {(provided, snapshot) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {characters.map((character, index) => (
-                  <Draggable 
-                    key={`char-card-${index}`}
-                    draggableId={`char-card-${index}`} 
-                    index={index} 
-                  >
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <div className="charCard box">
-                          <h1>{character.name}</h1>
-                        </div>
-                      </div>
-                    )}
-                  </Draggable> 
-                ))}
-                {provided.placeholder}
-              </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="row">
+          <div className="column">
+            {characters.length === 0 && (
+              <div style={{ margin: '20px' }}>Please wait, fetching characters...</div>
             )}
-          </Droppable>
-        </DragDropContext>
-
-      </div>
-      <div className="column right">
-        {houses.length === 0 && (
-          <div style={{ margin: '20px' }}>Please wait, fetching houses...</div>
-        )}
-        {houses.map((house, index) => <HouseCard key={`house-card-${index}`} house={house} />)}
-      </div>
-    </div>
+            <Droppable droppableId="charactersDroppable">
+              {(provided, snapshot) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  {characters.map((character, index) => (
+                    <Draggable 
+                      key={`char-card-${index}`}
+                      draggableId={`char-card-${index}`} 
+                      index={index} 
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <div className="charCard box">
+                            <h1>{character.name}</h1>
+                          </div>
+                        </div>
+                      )}
+                    </Draggable> 
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </div>
+          <div className="column right">
+            {houses.length === 0 && (
+              <div style={{ margin: '20px' }}>Please wait, fetching houses...</div>
+            )}
+            {houses.map((house, index) => (
+              <Droppable droppableId={`house-card-${index}`} key={`house-card-${index}`} index={index}  >
+                {(provided, snapshot) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    <div className="houseCard box">
+                      <h1>{house.name}</h1>
+                    </div>
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            ))}
+          </div>
+        </div>
+      </DragDropContext>
     </>
   )
+  
 }
 
 export default App
