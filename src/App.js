@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import CharacterCard from './CharacterCard'
 import HouseCard from './HouseCard'
 import './App.css'
-import { DndProvider , useCallback} from 'react-dnd'
+import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import update from 'immutability-helper';
 import smiley from "./smiley_emoji.jpg"

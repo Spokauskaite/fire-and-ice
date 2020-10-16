@@ -10,17 +10,17 @@ export default ({ accept , lastDroppedItem, onDrop}) => {
   });
 
   return(
-    
+
     <div ref={drop} className="houseCard box">
       {lastDroppedItem ? 
         <div>
           <div>
             <h2>{name}</h2>
           </div>
-         <div className = "row-col">
-           <h3>{lastDroppedItem}</h3>
-         </div>
-        </div> :
+          <div className = "row-col">
+            <h3>{lastDroppedItem}</h3>
+          </div>
+          </div> :
         <h1>{name}</h1> 
       }
     </div>
