@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import CharacterCard from './CharacterCard'
 import HouseCard from './HouseCard'
 import './App.css'
-import { DndProvider } from 'react-dnd'
+import { DndProvider , useCallback} from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import update from 'immutability-helper';
 import smiley from "./smiley_emoji.jpg"
-
-import { DragDropContext } from 'react-beautiful-dnd';
 
 const CHARACTER_API = 'https://anapioficeandfire.com/api/characters/'
 
@@ -128,9 +126,6 @@ const App = () => {
 
   }, [])
 
-
-
-
   const [droppedCharacters, setDroppedCharacters] = useState([]);
 
   function isDropped(name) {
@@ -138,9 +133,9 @@ const App = () => {
   }
 
   const handleDrop = useCallback((index, item) => {
-    const { id } = item;
+    const { id } = item
 
-    setDroppedCharacters(update(droppedCharacters, id ? { $push: [id] } : { $push: [] }));
+    setDroppedCharacters(update(droppedCharacters, id ? { $push: [id] } : { $push: [] }))
 
     setHouses(update(houses, {
       [index]: {
@@ -192,6 +187,10 @@ const App = () => {
 			</DndProvider>
     </>
   )
+  
 }
 
 export default App
+
+
+

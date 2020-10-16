@@ -10,6 +10,7 @@ export default ({ accept , lastDroppedItem, onDrop}) => {
   });
 
   return(
+    
     <div ref={drop} className="houseCard box">
       {lastDroppedItem ? 
         <div>
@@ -23,6 +24,7 @@ export default ({ accept , lastDroppedItem, onDrop}) => {
         <h1>{name}</h1> 
       }
     </div>
+
   )
 }
 
