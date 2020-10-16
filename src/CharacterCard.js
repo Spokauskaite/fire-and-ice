@@ -1,13 +1,25 @@
 import React from 'react'
+import { useDrag } from 'react-dnd';
 
-export default ({ character }) => {
-  const { name } = character
+export default ({ name, type, isDropped }) => {
 
-  console.log(name)
+  const [collectedProps, drag] = useDrag({
+    item: { 
+      id: name, 
+      type : type
+    }
+});
 
   return(
-    <div className="charCard box">
-      <h1>{name}</h1>
+    <div ref={drag}>
+      {isDropped ? 
+        <div className="NOcharCard box">
+          <h1>{name}</h1>
+        </div> :
+        <div className="charCard box">
+          <h1>{name}</h1>
+        </div>
+      }
     </div>
   )
 }

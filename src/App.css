@@ -8,6 +8,18 @@
   text-align: center;
   font-size: 10px;
 }
+
+.NOcharCard{
+  background:#FFFFFF;
+  color:#FFFFFF;
+  height:50px;
+  width:300px;
+  padding:15px;
+  margin:15px;
+  text-align: center;
+  font-size: 10px;
+}
+
 .houseCard{
   background:#766ec6;
   color:#FFFFFF;
@@ -41,4 +53,22 @@
 
 .right{
   align-items: flex-end;
+}
+
+.row-col {
+  display: ;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.text{
+  background:#FFFFFF;
+  height:300px;
+  width:500px;
+  padding-right:100px;
+  padding-top:50px;
+  margin:15px;
+  text-align: center;
+  font-size: 30px;
 }

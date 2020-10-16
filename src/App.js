@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import CharacterCard from './CharacterCard'
 import HouseCard from './HouseCard'
 import './App.css'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import update from 'immutability-helper';
+import smiley from "./smiley_emoji.jpg"
+
+import { DragDropContext } from 'react-beautiful-dnd';
 
 const CHARACTER_API = 'https://anapioficeandfire.com/api/characters/'
-// const HOUSE_API = "https://anapioficeandfire.com/api/houses/"
 
 const fetchCharacter = async (id) => {
   const response = await fetch(`${CHARACTER_API}${id}`)
@@ -34,11 +39,22 @@ const mixHouses = (houses) => {
 }
 
 const App = () => {
-  // const maxHouses = 444
-  // const nCards = 5
+
   const maxChars = 2138
-  const [characters, setCharacters] = useState([])
-  const [houses, setHouses] = useState([])
+  const [characters, setCharacters] = useState([
+    { name: "" , type: "" },
+    { name: "" , type: "" },
+    { name: "" , type: "" },
+    { name: "" , type: ""  },
+    { name: "" , type: "" },
+  ])
+  const [houses, setHouses] = useState([
+    { accepts: "" , lastDroppedItem: "" },
+    { accepts: "" , lastDroppedItem: "" },
+    { accepts: "" , lastDroppedItem: "" },
+    { accepts: "" , lastDroppedItem: "" },
+    { accepts: "" , lastDroppedItem: "" },
+  ])
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -61,37 +77,119 @@ const App = () => {
 
         const fetchedHouse = await fetchHouse(mainAllegiances)
 
+
+        const houseName = fetchedHouse.name
+        fetchedCharacter.allegiances = houseName
         fetchedCharacters.push(fetchedCharacter)
-        fetchedHouses.push(fetchedHouse)
+        fetchedHouses.push(houseName)
 
         i++
       }
 
       let mixedHouses = mixHouses(fetchedHouses)
 
-      setCharacters(fetchedCharacters)
-      setHouses(mixedHouses)
+      let updatedHouses = houses
+      for (let index = 0; index < mixedHouses.length; index++) {
+
+        const houseName = mixedHouses[index]
+        updatedHouses = update(updatedHouses, {
+          [index]: {
+            accepts: {
+              $set: houseName
+            }
+          }
+        })
+      }
+
+
+      let updatedCharacters = characters
+      for (let index = 0; index < characters.length; index++) {
+
+        const character = fetchedCharacters[index]
+        const {name} = character
+        const {allegiances} = character
+        updatedCharacters = update(updatedCharacters, {
+          [index]: {
+            name: {
+              $set: name
+            },
+            type: {
+              $set: allegiances
+            }
+          }
+        })
+      }
+
+      setCharacters(updatedCharacters)
+      setHouses(updatedHouses)
     }
 
     fetchCharacters()
+
   }, [])
+
+
+
+
+  const [droppedCharacters, setDroppedCharacters] = useState([]);
+
+  function isDropped(name) {
+    return droppedCharacters.indexOf(name) > -1;
+  }
+
+  const handleDrop = useCallback((index, item) => {
+    const { id } = item;
+
+    setDroppedCharacters(update(droppedCharacters, id ? { $push: [id] } : { $push: [] }));
+
+    setHouses(update(houses, {
+      [index]: {
+        lastDroppedItem: {
+          $set: item.id
+        }
+      }
+    }));
+  }, [droppedCharacters, houses]);
 
   return (
     <>
-    <div className="row">
-      <div className="column">
-        {characters.length === 0 && (
-          <div style={{ margin: '20px' }}>Please wait, fetching characters...</div>
-        )}
-      {characters.map((character, index) => <CharacterCard key={`char-card-${index}`} character={character} />)}
-      </div>
-      <div className="column right">
-        {houses.length === 0 && (
-          <div style={{ margin: '20px' }}>Please wait, fetching houses...</div>
-        )}
-        {houses.map((house, index) => <HouseCard key={`house-card-${index}`} house={house} />)}
-      </div>
-    </div>
+      <DndProvider backend={HTML5Backend}>
+        <div className="row">
+          <div className="column">
+            {characters[4].name === "" ? 
+              <div style={{ margin: '20px' }}>Please wait, fetching characters...</div> :
+               droppedCharacters.length === 5 ?
+                <div>
+                  <div className = "text">
+                    <h1>Šaunuolis Tumiukas! </h1>
+                    <img src={smiley} height = "200" ></img>
+                  </div>
+                  
+               </div>
+               :
+               characters.map(({name,type}, index) => <CharacterCard 
+                                                        key={`char-card-${index}`} 
+                                                        name = {name} 
+                                                        type = {type}
+                                                        isDropped={isDropped(name)}
+                                                      />)
+            
+            }
+            
+          </div>
+          <div className="column right">
+            {houses[4].accepts === "" ?
+              <div style={{ margin: '20px' }}>Please wait, fetching houses...</div> :
+              houses.map(({accepts, lastDroppedItem}, index) => <HouseCard 
+                                                                  accept={accepts} 
+                                                                  lastDroppedItem={lastDroppedItem}
+                                                                  onDrop={(item) => handleDrop(index, item)}
+                                                                  key={`house-card-${index}`} 
+                                                                />)
+            }
+          </div>
+        </div>
+			</DndProvider>
     </>
   )
 }
