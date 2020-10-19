@@ -28,7 +28,6 @@ const mixHouses = (houses) => {
   for (let i = 0; i < maxHouses; i++){
     const nItems = houses.length
     const houseId = Math.floor(Math.random() * nItems)
-
     mixedItems.push(houses[houseId])
     houses.splice(houseId, 1)
   }
@@ -37,22 +36,11 @@ const mixHouses = (houses) => {
 }
 
 const App = () => {
-
   const maxChars = 2138
-  const [characters, setCharacters] = useState([
-    { name: "" , type: "" },
-    { name: "" , type: "" },
-    { name: "" , type: "" },
-    { name: "" , type: ""  },
-    { name: "" , type: "" },
-  ])
-  const [houses, setHouses] = useState([
-    { accepts: "" , lastDroppedItem: "" },
-    { accepts: "" , lastDroppedItem: "" },
-    { accepts: "" , lastDroppedItem: "" },
-    { accepts: "" , lastDroppedItem: "" },
-    { accepts: "" , lastDroppedItem: "" },
-  ])
+  const nChars = 5
+  const [characters, setCharacters] = useState([])
+  const [houses, setHouses] = useState([])
+  const [droppedCharacters, setDroppedCharacters] = useState([]);
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -61,61 +49,44 @@ const App = () => {
       let mainAllegiances = null
       let i = 0
 
-      while (i < 5) {
+      while (i < nChars) {
         const id = Math.floor(Math.random() * maxChars) + 1
         const fetchedCharacter = await fetchCharacter(id)
 
         mainAllegiances = fetchedCharacter.allegiances
-
         if (mainAllegiances.length === 0){
           continue
         } else {
           mainAllegiances = mainAllegiances[0]
         }
-
         const fetchedHouse = await fetchHouse(mainAllegiances)
-
-
         const houseName = fetchedHouse.name
         fetchedCharacter.allegiances = houseName
         fetchedCharacters.push(fetchedCharacter)
         fetchedHouses.push(houseName)
-
         i++
       }
 
       let mixedHouses = mixHouses(fetchedHouses)
-
-      let updatedHouses = houses
+      let updatedHouses = []
       for (let index = 0; index < mixedHouses.length; index++) {
-
         const houseName = mixedHouses[index]
-        updatedHouses = update(updatedHouses, {
-          [index]: {
-            accepts: {
-              $set: houseName
-            }
-          }
-        })
+        const updatedHouse = {
+          accepts:houseName
+        }
+        updatedHouses.push(updatedHouse)
       }
 
-
-      let updatedCharacters = characters
-      for (let index = 0; index < characters.length; index++) {
-
+      let updatedCharacters = []
+      for (let index = 0; index < fetchedCharacters.length; index++) {
         const character = fetchedCharacters[index]
         const {name} = character
         const {allegiances} = character
-        updatedCharacters = update(updatedCharacters, {
-          [index]: {
-            name: {
-              $set: name
-            },
-            type: {
-              $set: allegiances
-            }
-          }
-        })
+        const updatedCharacter = {
+          name:name,
+          type: allegiances
+        }
+        updatedCharacters.push(updatedCharacter)
       }
 
       setCharacters(updatedCharacters)
@@ -126,17 +97,13 @@ const App = () => {
 
   }, [])
 
-  const [droppedCharacters, setDroppedCharacters] = useState([]);
-
-  function isDropped(name) {
+  const isDropped = (name) => {
     return droppedCharacters.indexOf(name) > -1;
   }
 
   const handleDrop = useCallback((index, item) => {
     const { id } = item
-
     setDroppedCharacters(update(droppedCharacters, id ? { $push: [id] } : { $push: [] }))
-
     setHouses(update(houses, {
       [index]: {
         lastDroppedItem: {
@@ -151,9 +118,9 @@ const App = () => {
       <DndProvider backend={HTML5Backend}>
         <div className="row">
           <div className="column">
-            {characters[4].name === "" ? 
+            {characters === null ? 
               <div style={{ margin: '20px' }}>Please wait, fetching characters...</div> :
-               droppedCharacters.length === 5 ?
+               droppedCharacters.length === nChars ?
                 <div>
                   <div className = "text">
                     <h1>Šaunuolis Tumiukas! </h1>
@@ -170,10 +137,9 @@ const App = () => {
                                                       />)
             
             }
-            
           </div>
           <div className="column right">
-            {houses[4].accepts === "" ?
+            {houses === null ?
               <div style={{ margin: '20px' }}>Please wait, fetching houses...</div> :
               houses.map(({accepts, lastDroppedItem}, index) => <HouseCard 
                                                                   accept={accepts} 
@@ -186,8 +152,7 @@ const App = () => {
         </div>
 			</DndProvider>
     </>
-  )
-  
+  )  
 }
 
 export default App
