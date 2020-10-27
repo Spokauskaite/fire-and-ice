@@ -12,10 +12,7 @@ export default ({ name, type, isDropped }) => {
 
   return(
     <div ref={drag}>
-      {isDropped ? 
-        <div className="NOcharCard box">
-          <h1>{name}</h1>
-        </div> :
+      {!isDropped &&
         <div className="charCard box">
           <h1>{name}</h1>
         </div>

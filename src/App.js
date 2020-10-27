@@ -4,7 +4,7 @@ import HouseCard from './HouseCard'
 import './App.css'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import update from 'immutability-helper';
+import update from 'immutability-helper'
 import smiley from "./smiley_emoji.jpg"
 
 const CHARACTER_API = 'https://anapioficeandfire.com/api/characters/'
@@ -123,10 +123,8 @@ const App = () => {
                droppedCharacters.length === nChars ?
                 <div>
                   <div className = "text">
-                    <h1>Šaunuolis Tumiukas! </h1>
                     <img src={smiley} height = "200" ></img>
                   </div>
-                  
                </div>
                :
                characters.map(({name,type}, index) => <CharacterCard 

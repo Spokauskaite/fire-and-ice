@@ -9,17 +9,6 @@
   font-size: 10px;
 }
 
-.NOcharCard{
-  background:#FFFFFF;
-  color:#FFFFFF;
-  height:50px;
-  width:300px;
-  padding:15px;
-  margin:15px;
-  text-align: center;
-  font-size: 10px;
-}
-
 .houseCard{
   background:#766ec6;
   color:#FFFFFF;
@@ -34,15 +23,11 @@
 .row {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  width: 100%;
 }
 
 .column {
   display: flex;
   flex-direction: column;
-  flex-basis: 100%;
-  flex: 1;
 }
 
 .box{
@@ -51,21 +36,10 @@
   align-items: center;
 }
 
-.right{
-  align-items: flex-end;
-}
-
-.row-col {
-  display: ;
-  flex-direction: column;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
 .text{
   background:#FFFFFF;
   height:300px;
-  width:500px;
+  width:300px;
   padding-right:100px;
   padding-top:50px;
   margin:15px;
